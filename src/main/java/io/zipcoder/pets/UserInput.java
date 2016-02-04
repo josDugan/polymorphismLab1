@@ -8,35 +8,41 @@ import java.util.Scanner;
  */
 public class UserInput {
     private Scanner in;
+    private PetQuery petQuery;
 
 
     public int getIntFromUser(String message) {
+
+        int numOfPets = 0;
         in = new Scanner(System.in);
-        System.out.println(message);
-        if (!in.hasNextInt()) {
-            return getIntFromUser("Invalid input. Please enter the number of pets you have.");
+        do {
+            System.out.println(message);
+            while (!in.hasNextInt()) {
+                System.out.println("Not a number. Please enter your number of pets.");
+                in.next();
+            }
+            numOfPets = in.nextInt();
         }
-        int numOfPets = in.nextInt();
-        if (numOfPets < 0) {
-            return getIntFromUser("Invalid input...negative number.");
-        }
+        while (numOfPets < 0);
 
         return numOfPets;
     }
 
-    public ArrayList<String[]> getArrayListFromUser(String message1, String message2, int num) {
-        ArrayList<String[]> userStrings = new ArrayList<String[]>();
+    public ArrayList<Pet> getArrayListFromUser(String message1, String message2, int num) {
+
+        ArrayList<Pet> userPets = new ArrayList<Pet>();
         in = new Scanner(System.in);
         for (int i = 0; i < num; i++) {
-            String[] petInfo = new String[2];
             System.out.println(message1 + (i+1) + endOfNumberWords(i+1));
-            petInfo[0] = in.next();
+            String name = in.next();
             System.out.println(message2);
-            petInfo[1] = in.next();
-            userStrings.add(petInfo);
+            String petType = in.next();
+            Pet pet = assignPet(petType);
+            pet.setName(name);
+            userPets.add(pet);
         }
 
-        return userStrings;
+        return userPets;
     }
 
     private String endOfNumberWords(int num) {
@@ -50,5 +56,18 @@ public class UserInput {
             default:
                 return "th pet?";
         }
+    }
+
+    public Pet assignPet(String petType) {
+        petType = petType.toLowerCase();
+        if (petType.equals("dog"))
+            return new Dog();
+        if (petType.equals("cat"))
+            return new Cat();
+        if (petType.equals("goat"))
+            return new Goat();
+        else
+            return new Pet();
+
     }
 }
